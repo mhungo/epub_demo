@@ -1,0 +1,112 @@
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+android {
+    compileSdkVersion flutter.compileSdkVersion
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId "com.example.epub_demo"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
+        minSdkVersion 21
+        targetSdkVersion flutter.targetSdkVersion
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
+
+    buildTypes {
+        release {
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig signingConfigs.debug
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+//    implementation 'com.github.kaushikgodhani:vocsy_epub_viewer_android_folioreader:V4'
+    implementation "androidx.appcompat:appcompat:$versions.appcompat"
+    implementation "androidx.constraintlayout:constraintlayout:$versions.constraintLayout"
+    implementation "androidx.recyclerview:recyclerview:$versions.recyclerview"
+    implementation "com.google.android.material:material:$versions.material"
+    testImplementation 'junit:junit:4.12'
+
+    implementation 'org.slf4j:slf4j-android:1.7.25'
+    implementation 'com.daimajia.swipelayout:library:1.2.0@aar'
+
+    //Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin"
+
+    implementation 'org.greenrobot:eventbus:3.1.1'
+
+    implementation "com.fasterxml.jackson.core:jackson-core:$versions.jackson"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:$versions.jackson"
+    implementation "com.fasterxml.jackson.core:jackson-databind:$versions.jackson"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$versions.jackson"
+    implementation "com.google.code.gson:gson:$versions.gson"
+
+    implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
+    implementation "com.squareup.retrofit2:converter-jackson:$versions.retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+
+    // R2 modules
+    api("com.github.codetoart:r2-shared-kotlin:$versions.r2SharedKotlin") {
+        changing = true
+    }
+    api("com.github.codetoart:r2-streamer-kotlin:$versions.r2StreamerKotlin") {
+        exclude group: "org.slf4j", module: "slf4j-api"
+        changing = true
+    }
+
+    // Only ReflectionUtils in Spring framework is used
+    implementation 'org.springframework:spring-core:4.3.19.RELEASE'
+
+    // Lifecycle
+    implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+}
